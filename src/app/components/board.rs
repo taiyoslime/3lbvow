@@ -14,7 +14,7 @@ pub fn board(props: &BoardProps) -> Html {
         <>
         { for props.board.iter().map(|r|
                 html! {
-                    <div class="flex justify-center space-x-0.5 mb-0.5">
+                    <div class="flex justify-center space-x-1 mb-1">
                     { for r.iter().map(|cell|
                             html!{
                                 <Cell cell={cell.clone()}/>

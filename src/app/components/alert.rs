@@ -8,6 +8,8 @@ pub struct AlertProps {
 #[function_component(Alert)]
 pub fn alert(props: &AlertProps) -> Html {
     html! {
-        <div> { props.children.clone() }</div>
+        <div class="flex justify-center items-center h-12"> 
+            <p class="text-xl font-bold">{ props.children.clone() } </p>
+        </div>
     }
 }

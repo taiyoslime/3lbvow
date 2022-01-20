@@ -65,8 +65,8 @@ impl Reducible for State {
     type Action = Action;
 
     fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
-        match action {
-            Action::Reset => {
+        match (self.game_status, action) {
+            (_, Action::Reset) => {
                 Self {
                     answer: helper::generate_new_answer(),
                     alphabets_status: helper::generate_new_alphabets_status(), 
@@ -74,8 +74,8 @@ impl Reducible for State {
                 }
                 .into()
             }
-            Action::PressChar(ch) => {
-                if self.game_status == GameStatus::Progress && self.current_col < 5 {
+            (GameStatus::Progress, Action::PressChar(ch)) => {
+                if self.current_col < 5 {
                     let mut board = self.board.clone();
                     board[self.current_row][self.current_col] = {
                         Cell {
@@ -95,13 +95,13 @@ impl Reducible for State {
                     self
                 }
             }
-            Action::PressEnter => {
-                if self.game_status == GameStatus::Progress && self.current_col == 5 {
+
+            (GameStatus::Progress, Action::PressEnter) => {
+                if self.current_col == 5 {
                     let mut word = String::new();
                     for cell in self.board[self.current_row].iter() {
                         word.push(cell.letter)
                     }
-                    gloo::console::log!(&word);
 
                     if helper::is_valid_word(&word) {
                         let mut board = self.board.clone();
@@ -126,6 +126,7 @@ impl Reducible for State {
                                 board,
                                 alphabets_status,
                                 game_status: GameStatus::Clear,
+                                alert_message: String::from("Congratz"),
                                 ..Default::default()
                             }
                             .into();
@@ -151,6 +152,7 @@ impl Reducible for State {
                                 board,
                                 alphabets_status,
                                 game_status: GameStatus::GameOver,
+                                alert_message: String::from("Game Over"),
                                 ..Default::default()
                             }
                             .into()
@@ -166,7 +168,7 @@ impl Reducible for State {
                         }
                     } else {
                         Self {
-                            alert_message: String::from("not in wordlist"),
+                            alert_message: String::from("Not in wordlist"),
                             ..((*self).clone())
                         }
                         .into()
@@ -176,8 +178,8 @@ impl Reducible for State {
                 }
             }
 
-            Action::PressDelete => {
-                if self.game_status == GameStatus::Progress && self.current_col > 0 {
+            (GameStatus::Progress, Action::PressDelete) => {
+                if self.current_col > 0 {
                     let mut board = self.board.clone();
                     board[self.current_row][self.current_col - 1].letter = Default::default();
                     Self {
@@ -191,6 +193,8 @@ impl Reducible for State {
                     self
                 }
             }
+
+            (_, _) => self
         }
     }
 }

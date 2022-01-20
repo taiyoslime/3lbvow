@@ -28,18 +28,20 @@ pub fn app() -> Html {
     };
 
     html! {
-        <div class="container mx-auto p-6">
-            <div class="m-4">
-                <Board board={state.board.clone()} />
-            </div>
-            <div class="m-4">
-                <Keyboard alphabets_status={state.alphabets_status.clone()} onkeypress={onkeypress} />
-            </div>
-            <Alert>
-                { state.alert_message.clone() }
-            </Alert>
-            <div class="flex justify-center">
-                <button onclick={reset} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"> { "reset" } </button>
+        <div class="min-h-screen bg-slate-50">
+            <div class="container mx-auto p-6">
+                <div class="flex justify-center">
+                    <div class="w-96 flex frex-row justify-end px-6">
+                        <button onclick={reset} class="w-16 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded"> { "reset" } </button>
+                    </div>
+                </div>
+                <div class="m-4">
+                    <Board board={state.board.clone()} />
+                </div>
+                <div class="m-4">
+                    <Keyboard alphabets_status={state.alphabets_status.clone()} onkeypress={onkeypress} />
+                </div>
+                <Alert>{ state.alert_message.clone() }</Alert>
             </div>
         </div>
     }
