@@ -37,41 +37,66 @@ pub fn keyboard(props: &KeyboardProps) -> Html {
 
         || drop(listener)
     });
+    
+    // TODO
+    let onclick_enter = {
+        let onkeypress = props.onkeypress.clone();
+        Callback::from(move |_| onkeypress.emit(state::Action::PressEnter))
+    };
+
+    // TODO
+    let onclick_delete = {
+        let onkeypress = props.onkeypress.clone();
+        Callback::from(move |_| onkeypress.emit(state::Action::PressDelete))
+    };
 
     // TODO
     html! {
-        <div>
+        <div class="select-none">
             <div class="flex justify-center space-x-1 mb-1">
-                { for "QWERTYUIOP".chars().map(|ch|
+                { for "QWERTYUIOP".chars().map(|ch| {
+                        let onclick = {
+                            let onkeypress = props.onkeypress.clone();
+                            Callback::from(move |_| onkeypress.emit(state::Action::PressChar(ch)))
+                        };
                         html! {
-                            <Key status={props.alphabets_status[&ch].clone()} width={classes!("w-10")}>
+                            <Key onclick={onclick} status={props.alphabets_status[&ch].clone()} width={classes!("w-10")}>
                                 {ch}
                             </Key>
                         }
-                    )
-                }
-            </div>
-            <div class="flex justify-center space-x-1 mb-1">
-                { for "ASDFGHJKL".chars().map(|ch|
-                    html! {
-                        <Key status={props.alphabets_status[&ch].clone()} width={classes!("w-10")}>
-                            {ch}
-                        </Key>
                     })
                 }
             </div>
             <div class="flex justify-center space-x-1 mb-1">
-                <Key status={AlphaStatus::Unknown} width={classes!("w-20")}>
-                    {"ENTER"}
-                </Key>
-                { for "ZXCVBNM".chars().map(|ch|
+                { for "ASDFGHJKL".chars().map(|ch| {
+                    let onclick = {
+                        let onkeypress = props.onkeypress.clone();
+                        Callback::from(move |_| onkeypress.emit(state::Action::PressChar(ch)))
+                    };
                     html! {
-                        <Key status={props.alphabets_status[&ch].clone()} width={classes!("w-10")}>
+                        <Key onclick={onclick} status={props.alphabets_status[&ch].clone()} width={classes!("w-10")}>
                             {ch}
                         </Key>
-                    }
+                    }})
+                }
+            </div>
+            <div class="flex justify-center space-x-1 mb-1">
+                <Key onclick={onclick_enter} status={AlphaStatus::Unknown} width={classes!("w-20")}>
+                    {"ENTER"}
+                </Key>
+                
+                { for "ZXCVBNM".chars().map(|ch| {
+                    let onclick = {
+                        let onkeypress = props.onkeypress.clone();
+                        Callback::from(move |_| onkeypress.emit(state::Action::PressChar(ch)))
+                    };
+                    html! {
+                        <Key onclick={onclick} status={props.alphabets_status[&ch].clone()} width={classes!("w-10")}>
+                            {ch}
+                        </Key>
+                    }}
                 )}
-                <Key status={AlphaStatus::Unknown} width={classes!("w-20")}>
+                <Key onclick={onclick_delete} status={AlphaStatus::Unknown} width={classes!("w-20")}>
                     {"DELETE"}
                 </Key>
             </div>
@@ -83,7 +108,8 @@ pub fn keyboard(props: &KeyboardProps) -> Html {
 pub struct KeyProps {
     status: state::AlphaStatus,
     children: Children,
-    width: Classes
+    width: Classes,
+    onclick: Callback<yew::MouseEvent>,
 }
 
 #[function_component(Key)]
@@ -103,8 +129,10 @@ pub fn cell(props: &KeyProps) -> Html {
             _ => "text-slate-100"
     });
 
+    let onclick = props.onclick.clone();
+
     html! {
-        <div class={classes!("h-14", props.width.clone(), "flex", "items-center", "justify-center", "rounded", bg)} >
+        <div {onclick} class={classes!("h-14", props.width.clone(), "flex", "items-center", "justify-center", "rounded", bg)} >
             <p class={classes!("font-bold", tc)}>{ props.children.clone() }</p>
         </div>
     }
