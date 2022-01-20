@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "tailwindcss": "^3.0.15"
+  },
+  "scripts": {
+    "dev": "tailwindcss -c ./tailwind.config.js -o ./tailwind.css --minify && trunk serve"
+  }
+}
