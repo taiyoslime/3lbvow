@@ -27,14 +27,15 @@ pub fn app() -> Html {
     };
 
     html! {
-        <>
+        <div class="container mx-auto p-6">
             <Board board={state.board.clone()} />
             <Keyboard onkeypress={onkeypress} />
             <Alert>
                 { state.alert_message.clone() }
             </Alert>
-            {format!("{:?}", state.game_status)}
-            <button onclick={reset}> { "reset" } </button>
-        </>
+            <div class="flex justify-center">
+                <button onclick={reset} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"> { "reset" } </button>
+            </div>
+        </div>
     }
 }

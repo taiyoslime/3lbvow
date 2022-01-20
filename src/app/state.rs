@@ -94,7 +94,7 @@ impl Reducible for State {
                 if self.current_col == 5 {
                     let mut word = String::new();
                     for cell in self.board[self.current_row].iter() {
-                        word.push(cell.letter)
+                        word.push(cell.letter.to_ascii_lowercase()) // TODO
                     }
 
                     if helper::is_valid_word(&word) {
