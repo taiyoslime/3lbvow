@@ -1,5 +1,5 @@
 use super::super::state;
-use state::{CellStatus};
+use state::{AlphaStatus};
 use yew::prelude::*;
 
 #[derive(PartialEq, Properties, Clone)]
@@ -36,17 +36,18 @@ pub struct CellProps {
 
 #[function_component(Cell)]
 pub fn cell(props: &CellProps) -> Html {
+    // TODO
     let bg = String::from(
         match props.cell.status {
-            CellStatus::Unknown => "bg-slate-200",
-            CellStatus::Correct => "bg-green-500",
-            CellStatus::Present => "bg-yellow-500",
-            CellStatus::Absent => "bg-gray-500"
+            AlphaStatus::Unknown => "bg-slate-200",
+            AlphaStatus::Correct => "bg-green-500",
+            AlphaStatus::Present => "bg-yellow-500",
+            AlphaStatus::Absent => "bg-gray-500"
     });
 
     let tc = String::from(
         match props.cell.status {
-            CellStatus::Unknown => "text-neutral-700",
+            AlphaStatus::Unknown => "text-neutral-700",
             _ => "text-slate-100"
     });
 

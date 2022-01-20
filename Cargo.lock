@@ -348,6 +348,8 @@ dependencies = [
  "gloo 0.6.0",
  "rand",
  "serde",
+ "wasm-bindgen",
+ "web-sys",
  "yew",
 ]
 

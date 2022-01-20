@@ -12,7 +12,8 @@ use components::{alert::Alert, board::Board, keyboard::Keyboard};
 #[function_component(App)]
 pub fn app() -> Html {
     let state = use_reducer(|| State {
-        answer: helper::generate_new_answer().to_string(),
+        answer: helper::generate_new_answer(),
+        alphabets_status: helper::generate_new_alphabets_status(),
         ..Default::default()
     });
 
@@ -28,8 +29,12 @@ pub fn app() -> Html {
 
     html! {
         <div class="container mx-auto p-6">
-            <Board board={state.board.clone()} />
-            <Keyboard onkeypress={onkeypress} />
+            <div class="m-4">
+                <Board board={state.board.clone()} />
+            </div>
+            <div class="m-4">
+                <Keyboard alphabets_status={state.alphabets_status.clone()} onkeypress={onkeypress} />
+            </div>
             <Alert>
                 { state.alert_message.clone() }
             </Alert>

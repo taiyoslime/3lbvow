@@ -2,25 +2,27 @@ use serde::{Deserialize, Serialize};
 use std::rc::Rc;
 use yew::prelude::*;
 
+use std::collections::HashMap;
+
 use super::helper;
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub enum CellStatus {
+pub enum AlphaStatus {
     Unknown,
     Correct,
     Present,
     Absent,
 }
 
-impl Default for CellStatus {
+impl Default for AlphaStatus {
     fn default() -> Self {
-        CellStatus::Unknown
+        AlphaStatus::Unknown
     }
 }
 
 #[derive(Default, Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Cell {
-    pub status: CellStatus,
+    pub status: AlphaStatus,
     pub letter: char,
 }
 
@@ -39,6 +41,8 @@ impl Default for GameStatus {
 
 pub type Board = [[Cell; 5]; 6];
 
+pub type AlphabetsStatus = HashMap<char, AlphaStatus>;
+
 #[derive(Default, Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct State {
     pub answer: String,
@@ -46,6 +50,7 @@ pub struct State {
     pub current_col: usize,
     pub current_row: usize,
     pub game_status: GameStatus,
+    pub alphabets_status: AlphabetsStatus,
     pub alert_message: String,
 }
 
@@ -62,15 +67,15 @@ impl Reducible for State {
     fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
         match action {
             Action::Reset => {
-                let answer = helper::generate_new_answer();
                 Self {
-                    answer: answer.into(),
+                    answer: helper::generate_new_answer(),
+                    alphabets_status: helper::generate_new_alphabets_status(), 
                     ..Default::default()
                 }
                 .into()
             }
             Action::PressChar(ch) => {
-                if self.current_col < 5 {
+                if self.game_status == GameStatus::Progress && self.current_col < 5 {
                     let mut board = self.board.clone();
                     board[self.current_row][self.current_col] = {
                         Cell {
@@ -91,20 +96,25 @@ impl Reducible for State {
                 }
             }
             Action::PressEnter => {
-                if self.current_col == 5 {
+                if self.game_status == GameStatus::Progress && self.current_col == 5 {
                     let mut word = String::new();
                     for cell in self.board[self.current_row].iter() {
-                        word.push(cell.letter.to_ascii_lowercase()) // TODO
+                        word.push(cell.letter)
                     }
+                    gloo::console::log!(&word);
 
                     if helper::is_valid_word(&word) {
                         let mut board = self.board.clone();
+                        let mut alphabets_status = self.alphabets_status.clone();
 
                         let mut used = [false; 5];
                         let mut solved = true;
+
+                        // TODO
                         for i in 0..5 {
                             if word[i..(i + 1)] == self.answer[i..(i + 1)] {
-                                board[self.current_row][i].status = CellStatus::Correct;
+                                board[self.current_row][i].status = AlphaStatus::Correct;
+                                alphabets_status.insert(word.chars().nth(i).unwrap(), AlphaStatus::Correct);
                                 used[i] = true;
                             } else {
                                 solved = false;
@@ -114,6 +124,7 @@ impl Reducible for State {
                         if solved {
                             return Self {
                                 board,
+                                alphabets_status,
                                 game_status: GameStatus::Clear,
                                 ..Default::default()
                             }
@@ -123,19 +134,22 @@ impl Reducible for State {
                         for (i, x) in word.chars().enumerate() {
                             for (j, y) in self.answer.chars().enumerate() {
                                 if x == y && !used[j] {
-                                    board[self.current_row][i].status = CellStatus::Present;
+                                    board[self.current_row][i].status = AlphaStatus::Present;
+                                    alphabets_status.insert(x, AlphaStatus::Present);
                                     used[j] = true;
                                     break;
                                 }
                             }
-                            if board[self.current_row][i].status == CellStatus::Unknown {
-                                board[self.current_row][i].status = CellStatus::Absent;
+                            if board[self.current_row][i].status == AlphaStatus::Unknown {
+                                board[self.current_row][i].status = AlphaStatus::Absent;
+                                alphabets_status.insert(x, AlphaStatus::Absent);
                             }
                         }
 
                         if self.current_row == 5 {
                             Self {
                                 board,
+                                alphabets_status,
                                 game_status: GameStatus::GameOver,
                                 ..Default::default()
                             }
@@ -143,6 +157,7 @@ impl Reducible for State {
                         } else {
                             Self {
                                 board,
+                                alphabets_status,
                                 current_row: self.current_row + 1,
                                 current_col: 0,
                                 ..((*self).clone())
@@ -162,16 +177,14 @@ impl Reducible for State {
             }
 
             Action::PressDelete => {
-                if self.current_col > 0 {
+                if self.game_status == GameStatus::Progress && self.current_col > 0 {
                     let mut board = self.board.clone();
                     board[self.current_row][self.current_col - 1].letter = Default::default();
                     Self {
-                        answer: self.answer.clone(),
                         board,
-                        current_row: self.current_row,
                         current_col: self.current_col - 1,
-                        game_status: self.game_status,
                         alert_message: String::new(),
+                        ..((*self).clone())
                     }
                     .into()
                 } else {
