@@ -52,8 +52,14 @@ pub fn cell(props: &CellProps) -> Html {
     });
 
     html! {
-        <div class={classes!("h-16", "w-16", "flex", "items-center", "justify-center", "rounded", bg)} >
-            <p class={classes!("text-3xl", "font-bold", tc)}>{ props.cell.letter }</p>
+        <div class={classes!("h-16", "w-16", "flex", "items-center", "justify-center", "rounded", "cursor-default", bg)} >
+            <p class={classes!("text-3xl", "font-bold", tc)}>
+                if props.cell.letter.is_ascii_uppercase() {
+                    { props.cell.letter }
+                } else {
+                    { " " }
+                } 
+            </p>
         </div>
     }
 
