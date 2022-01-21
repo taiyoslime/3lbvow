@@ -117,10 +117,10 @@ pub fn cell(props: &KeyProps) -> Html {
     // TODO
     let bg = String::from(
         match props.status {
-            AlphaStatus::Unknown => "bg-slate-200",
-            AlphaStatus::Correct => "bg-green-500",
-            AlphaStatus::Present => "bg-yellow-500",
-            AlphaStatus::Absent => "bg-gray-500"
+            AlphaStatus::Unknown => "bg-slate-200 hover:bg-slate-300 active:bg-slate-400",
+            AlphaStatus::Correct => "bg-green-500 hover:bg-green-600 active:bg-green-700",
+            AlphaStatus::Present => "bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700",
+            AlphaStatus::Absent => "bg-gray-500 hover:bg-gray-600 active:bg-gray-700"
     });
 
     let tc = String::from(
@@ -132,7 +132,7 @@ pub fn cell(props: &KeyProps) -> Html {
     let onclick = props.onclick.clone();
 
     html! {
-        <div {onclick} class={classes!("h-14", props.width.clone(), "flex", "items-center", "justify-center", "rounded", bg)} >
+        <div {onclick} class={classes!("h-14", props.width.clone(), "flex", "items-center", "justify-center", "rounded", "cursor-pointer", bg)} >
             <p class={classes!("font-bold", tc)}>{ props.children.clone() }</p>
         </div>
     }
