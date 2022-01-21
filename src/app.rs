@@ -32,7 +32,7 @@ pub fn app() -> Html {
             <div class="container mx-auto p-6">
                 <div class="flex justify-center">
                     <div class="w-96 flex frex-row justify-end px-6">
-                        <button onclick={reset} class="w-16 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded"> { "reset" } </button>
+                        <div onclick={reset} class="w-16 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 py-2 px-3 rounded cursor-pointer"><p class="text-white font-bold">{ "reset" } </p> </div>
                     </div>
                 </div>
                 <div class="m-4">
