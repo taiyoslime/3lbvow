@@ -563,6 +563,13 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 5rem;
 }
 
+.select-none {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
 .items-center {
   align-items: center;
 }
