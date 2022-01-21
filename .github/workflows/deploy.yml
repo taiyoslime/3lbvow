@@ -23,7 +23,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - run: rustup target add wasm32-unknown-unknown
-      - run: cargo install trunk
+      - run: which trunk || cargo install trunk
       - run: NODE_ENV=production npx tailwindcss -c ./tailwind.config.js -o ./tailwind.css --minify
       - run: trunk build --release --public-url 3lbvow
 
