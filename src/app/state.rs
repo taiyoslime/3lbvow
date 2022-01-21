@@ -133,6 +133,9 @@ impl Reducible for State {
                         }
 
                         for (i, x) in word.chars().enumerate() {
+                            if board[self.current_row][i].status == AlphaStatus::Correct {
+                                continue;
+                            }
                             for (j, y) in self.answer.chars().enumerate() {
                                 if x == y && !used[j] {
                                     board[self.current_row][i].status = AlphaStatus::Present;
